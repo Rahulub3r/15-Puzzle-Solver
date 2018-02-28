@@ -31,14 +31,14 @@ object PuzzleSolver {
     //first check that the board is solvable (step 1)
     require(startBoard.solvable)
 
+    //store the first index of zero in moves
+    startBoard.moves ++ Seq(startBoard.board.indexOf(0))
+
     def boardOrder(boardInput: PuzzleBoard) = boardInput.heuristic
 
     //create an empty priority queue (step 2)
-    val boardPriorityQueue: mutable.PriorityQueue[PuzzleBoard] = mutable.PriorityQueue.empty[PuzzleBoard](
+    val boardPriorityQueue: mutable.PriorityQueue[PuzzleBoard] = mutable.PriorityQueue(startBoard)(
       Ordering.by(boardOrder))
-
-    //enqueue the startBoard to the queue (step 3)
-    boardPriorityQueue.enqueue(startBoard)
 
     //use best first search to find the solution (step 4)
     while (boardPriorityQueue.nonEmpty) {
@@ -46,29 +46,24 @@ object PuzzleSolver {
       //Choose the last board in the queue as it has the lowest heuristic value
       if (boardPriorityQueue.last.heuristic == 0) boardPriorityQueue.last
 
-      //Find all the possible valid moves for that board
+      //Find all the valid moves for that current state of the board
       val validMoves: Seq[Int] = boardPriorityQueue.last.validMoves()
+      println(f"valid moves are $validMoves")
 
-      //If there are no valid moves for that board return None
-      if (validMoves.isEmpty) None
-
-      else {
-
-        //for each possible move create a new board and make move and enqueue it to the queue
-        for (moves <- validMoves) {
-          val tempBoard: PuzzleBoard = startBoard
-
-          //If the heuristic is 0 return the board
-          if (tempBoard.heuristic == 0) Some(tempBoard)
-
-          else {
-            boardPriorityQueue.enqueue(tempBoard.makeMove(moves))
-            boardPriorityQueue.dequeue()
-          }
-        }
+      //for each possible move create a new board and make move and enqueue it to the queue
+      for (move <- validMoves) {
+        val tempBoard: PuzzleBoard = boardPriorityQueue.last
+        println(f"last board is ${boardPriorityQueue.last}")
+        boardPriorityQueue.enqueue(tempBoard.makeMove(move))
+        println(f"board after enqueue: $boardPriorityQueue")
+        boardPriorityQueue.dequeue()
+        println(f"board after dequeue: $boardPriorityQueue")
       }
+      println(f"Last board is ${boardPriorityQueue.last}")
     }
-    None
+
+    if (boardPriorityQueue.last.heuristic == 0) Some(boardPriorityQueue.last)
+    else None
   }
   /*** No changes below this line ***/
 
