@@ -153,7 +153,7 @@ case class PuzzleBoard(
     if (move == board.indexOf(0)) false //does not allow standstill move
     else if (manhattanDistance(move, board.indexOf(0)) > 1) false //does not allow diagonal movement or more than one step movemenet
     else if (maxMoves < 2) false //cannot exceed max number of moves
-    else if (moves.length > 1){
+    else if (moves.lengthCompare(1) != 0){
       if (move == moves(moves.length-2)) false
       else true
     } //no going back and forth

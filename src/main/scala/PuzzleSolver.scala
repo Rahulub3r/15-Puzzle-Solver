@@ -33,6 +33,7 @@ object PuzzleSolver {
 
     //If the heuristic is 2 move one piece and return the solved board
     if (startBoard.heuristic == 2) {
+      startBoard.makeMove(14)
       startBoard.makeMove(15)
       Some(startBoard)
     }
