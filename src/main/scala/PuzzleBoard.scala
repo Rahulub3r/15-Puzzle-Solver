@@ -99,7 +99,12 @@ case class PuzzleBoard(
     *
     * @return a sequence of valid moves (new positions for the empty square)
     */
-  def validMoves(): Seq[Int] = ??? // Implement this method
+  def validMoves(): Seq[Int] = {
+    val zeroIndex = board.indexOf(0)
+    val indexes = board.zipWithIndex.map(_._2)
+    val distances = indexes.map(x => manhattanDistance(x, zeroIndex))
+    Random.shuffle(distances.zipWithIndex.filter(_._1 == 1).map(_._2))
+  }
 
   /**
     * Create new board that records the new board state
@@ -144,7 +149,16 @@ case class PuzzleBoard(
     * @param move the move
     * @return true if the move is valid, false otherwise
     */
-  def isValidMove(move: Int): Boolean = ??? // Implement this method
+  def isValidMove(move: Int): Boolean = {
+    if (move == board.indexOf(0)) false //does not allow standstill move
+    else if (manhattanDistance(move, board.indexOf(0)) > 1) false //does not allow diagonal movement or more than one step movemenet
+    else if (maxMoves < 2) false //cannot exceed max number of moves
+    else if (moves.length > 1){
+      if (move == moves(moves.length-2)) false
+      else true
+    } //no going back and forth
+    else true
+  }
 
   /**
     * Calculate the Manhattan Distance moving between two positions
@@ -156,7 +170,11 @@ case class PuzzleBoard(
     * @return the manhattan distance
     */
   @inline
-  private def manhattanDistance(x: Int, y: Int): Int = ??? // Implement this method
+  private def manhattanDistance(x: Int, y: Int): Int = {
+    val (x1_coord, y1_coord) = indexToCoordinates(x)
+    val (x2_coord, y2_coord) = indexToCoordinates(y)
+    Math.abs(x1_coord - x2_coord) + Math.abs(y1_coord - y2_coord)
+  }
 
   /*** No changes below this line ***/
 
