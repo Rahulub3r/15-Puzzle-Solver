@@ -28,20 +28,28 @@ object PuzzleSolver {
     while (boardPriorityQueue.nonEmpty && counter < boardPriorityQueue.last.maxMoves) {
 
       counter += 1
-
       val currentBoard = boardPriorityQueue.dequeue()
+      var heuristicSeq: Seq[Int] = Seq(currentBoard.heuristic)
 
       if (currentBoard.heuristic == 0) return Some(currentBoard)
 
       val validMoves = currentBoard.validMoves()
+
       for (move <- validMoves){
         val nextBoard = currentBoard.makeMove(move)
+        heuristicSeq = heuristicSeq ++ Seq(nextBoard.heuristic)
         boardPriorityQueue.enqueue(nextBoard)
         }
+
       for(i <- 0 until boardPriorityQueue.length-1) boardPriorityQueue.dequeue()
+
+      if (heuristicSeq.distinct.lengthCompare(1) == 0) {
+        boardPriorityQueue.dequeueAll
+        if(validMoves.nonEmpty) boardPriorityQueue.enqueue(currentBoard.makeMove(validMoves.min))
+      }
+
     }
     None
   }
   /*** No changes below this line ***/
-
 }
