@@ -103,7 +103,9 @@ case class PuzzleBoard(
     val zeroIndex = board.indexOf(0)
     val indexes = board.zipWithIndex.map(_._2)
     val distances = indexes.map(x => manhattanDistance(x, zeroIndex))
-    Random.shuffle(distances.zipWithIndex.filter(_._1 == 1).map(_._2))
+    val movesToBeReturned = distances.zipWithIndex.filter(_._1 == 1).map(_._2)
+    val maskForMoves: Seq[Boolean] = movesToBeReturned.map(isValidMove)
+    Random.shuffle(movesToBeReturned.zip(maskForMoves).collect {case (v, true) => v})
   }
 
   /**
